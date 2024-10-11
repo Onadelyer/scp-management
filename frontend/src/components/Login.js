@@ -25,7 +25,7 @@ function Login() {
       // Update auth state
       setAuth({
         isAuthenticated: true,
-        isAdmin: response.data.user_role === 'admin',
+        role: response.data.user_role,
         username: username,
       });
 

@@ -16,7 +16,7 @@ function Header() {
     // Update auth state
     setAuth({
       isAuthenticated: false,
-      isAdmin: false,
+      role: null,
       username: null,
     });
 
@@ -32,7 +32,7 @@ function Header() {
       </h1>
       <nav className="nav-links">
         <ul className="nav-menu">
-          {auth.isAdmin ? (
+          {auth.isAuthenticated && auth.role === "Administrative Personnel" ? (
             <>
               <li><Link to="/admin">Адмінська сторінка</Link></li>
             </>

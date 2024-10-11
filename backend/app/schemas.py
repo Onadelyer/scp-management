@@ -5,11 +5,15 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str
+    secret_token: str
+
+class UserLogin(BaseModel):
+    username: str
+    password: str
 
 class UserResponse(UserBase):
     id: int
-    is_admin: bool
+    role: str
 
     class Config:
         orm_mode = True
-        

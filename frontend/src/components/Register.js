@@ -6,6 +6,7 @@ import '../styles/Register.css';
 function Register() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [secretToken, setSecretToken] = useState('');
   const navigate = useNavigate();
   
   const handleSubmit = async (event) => {
@@ -14,12 +15,17 @@ function Register() {
       await axios.post('http://localhost:8001/register', {
         username,
         password,
+        secret_token: secretToken,
       });
       alert('Реєстрація успішна! Будь ласка, увійдіть.');
       navigate('/login');
     } catch (error) {
       console.error('Registration failed:', error);
-      alert('Реєстрація не вдалася');
+      if (error.response && error.response.data.detail) {
+        alert(`Реєстрація не вдалася: ${error.response.data.detail}`);
+      } else {
+        alert('Реєстрація не вдалася');
+      }
     }
   };
 
@@ -44,6 +50,16 @@ function Register() {
             value={password}
             placeholder="Введіть пароль"
             onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>Секретний токен:</label>
+          <input
+            type="text"
+            value={secretToken}
+            placeholder="Введіть секретний токен"
+            onChange={(e) => setSecretToken(e.target.value)}
             required
           />
         </div>

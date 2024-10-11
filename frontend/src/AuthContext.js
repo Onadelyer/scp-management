@@ -5,7 +5,7 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [auth, setAuth] = useState({
     isAuthenticated: false,
-    isAdmin: false,
+    role: null,
     username: null,
   });
 
@@ -18,7 +18,7 @@ export function AuthProvider({ children }) {
     if (token && userRole && username) {
       setAuth({
         isAuthenticated: true,
-        isAdmin: userRole === 'admin',
+        role: userRole,
         username: username,
       });
     }
