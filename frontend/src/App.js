@@ -5,6 +5,7 @@ import Footer from './components/Footer';
 import Home from './components/Home';
 import Login from './components/Login';
 import Register from './components/Register';
+import UserManagement from './components/UserManagement'; // Import the new component
 import AuthContext from './AuthContext';
 import './styles/App.css';
 
@@ -19,6 +20,10 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          {/* Protected route for User Management */}
+          {auth.isAuthenticated && auth.role === 'Administrative Personnel' && (
+            <Route path="/user-management" element={<UserManagement />} />
+          )}
           {/* Add other routes if needed */}
         </Routes>
         <Footer />
