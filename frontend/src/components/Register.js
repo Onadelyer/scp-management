@@ -16,6 +16,7 @@ function Register() {
         username,
         password,
         secret_token: secretToken,
+        role: 'Administrative Personnel',  // Add this line
       });
       alert('Реєстрація успішна! Будь ласка, увійдіть.');
       navigate('/login');
@@ -24,7 +25,7 @@ function Register() {
       if (error.response && error.response.data.detail) {
         alert(`Реєстрація не вдалася: ${error.response.data.detail}`);
       } else {
-        alert('Реєстрація не вдалася');
+        alert(`Реєстрація не вдалася: ${error.message}`);
       }
     }
   };

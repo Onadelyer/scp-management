@@ -1,16 +1,19 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from . import models, schemas
 from .database import get_db
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from typing import List, Optional
 
 SECRET_KEY = "your_secret_key"
 ALGORITHM = "HS256"
 SECRET_REGISTRATION_TOKEN = "super_secret_token"  # Define your secret token here
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 router = APIRouter()
 
 # Utility Functions
@@ -29,7 +32,8 @@ def create_user(db: Session, user: schemas.UserCreate):
     new_user = models.User(
         username=user.username, 
         hashed_password=hashed_password,
-        role="Administrative Personnel"  # Set role during registration
+        role=user.role,
+        is_active=True
     )
     db.add(new_user)
     db.commit()
@@ -52,12 +56,39 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
+def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        if username is None:
+            raise credentials_exception
+    except JWTError:
+        raise credentials_exception
+    user = get_user_by_username(db, username)
+    if user is None or not user.is_active:
+        raise credentials_exception
+    return user
+
+def get_current_active_admin(current_user: models.User = Depends(get_current_user)):
+    if current_user.role != "Administrative Personnel":
+        raise HTTPException(status_code=403, detail="Not enough permissions")
+    return current_user
+
 # API Routes
 
 @router.post("/register", response_model=schemas.UserResponse)
 def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    if user.secret_token != SECRET_REGISTRATION_TOKEN:
-        raise HTTPException(status_code=400, detail="Invalid secret token")
+    if user.role == "Administrative Personnel":
+        if user.secret_token != SECRET_REGISTRATION_TOKEN:
+            raise HTTPException(status_code=400, detail="Invalid secret token")
+    else:
+        # For other roles, ensure only admins can create them
+        raise HTTPException(status_code=400, detail="Cannot register this role directly")
     db_user = get_user_by_username(db, user.username)
     if db_user:
         raise HTTPException(status_code=400, detail="Username already registered")
@@ -67,7 +98,7 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
 @router.post("/login")
 def login(user: schemas.UserLogin, db: Session = Depends(get_db)):
     authenticated_user = authenticate_user(db, user.username, user.password)
-    if not authenticated_user:
+    if not authenticated_user or not authenticated_user.is_active:
         raise HTTPException(status_code=400, detail="Invalid credentials")
     access_token_expires = timedelta(minutes=30)
     access_token = create_access_token(
@@ -80,3 +111,59 @@ def login(user: schemas.UserLogin, db: Session = Depends(get_db)):
         "token_type": "bearer", 
         "user_role": user_role
     }
+
+@router.get("/users", response_model=List[schemas.UserResponse])
+def get_users(db: Session = Depends(get_db), current_user: models.User = Depends(get_current_active_admin)):
+    users = db.query(models.User).all()
+    return users
+
+@router.post("/users", response_model=schemas.UserResponse)
+def create_new_user(user: schemas.UserCreate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_active_admin)):
+    db_user = get_user_by_username(db, user.username)
+    if db_user:
+        raise HTTPException(status_code=400, detail="Username already registered")
+    # Only admin can create any user
+    new_user = create_user(db, user)
+    return new_user
+
+@router.put("/users/{user_id}", response_model=schemas.UserResponse)
+def update_user(user_id: int, user: schemas.UserUpdate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_active_admin)):
+    db_user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    if user.password:
+        db_user.hashed_password = get_password_hash(user.password)
+    if user.role:
+        db_user.role = user.role
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+@router.delete("/users/{user_id}", response_model=schemas.UserDeleteResponse)
+def delete_user(user_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_active_admin)):
+    db_user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    db.delete(db_user)
+    db.commit()
+    return {"detail": "User deleted successfully"}
+
+@router.post("/users/{user_id}/deactivate", response_model=schemas.UserResponse)
+def deactivate_user(user_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_active_admin)):
+    db_user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    db_user.is_active = False
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+@router.post("/users/{user_id}/activate", response_model=schemas.UserResponse)
+def activate_user(user_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_active_admin)):
+    db_user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    db_user.is_active = True
+    db.commit()
+    db.refresh(db_user)
+    return db_user

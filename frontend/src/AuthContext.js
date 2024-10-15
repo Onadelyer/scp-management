@@ -7,6 +7,7 @@ export function AuthProvider({ children }) {
     isAuthenticated: false,
     role: null,
     username: null,
+    token: null,
   });
 
   useEffect(() => {
@@ -20,6 +21,7 @@ export function AuthProvider({ children }) {
         isAuthenticated: true,
         role: userRole,
         username: username,
+        token: token,
       });
     }
   }, []);

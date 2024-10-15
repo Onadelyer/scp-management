@@ -1,4 +1,3 @@
-
 import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -27,13 +26,10 @@ function Login() {
         isAuthenticated: true,
         role: response.data.user_role,
         username: username,
+        token: response.data.access_token,
       });
 
-      if (response.data.user_role === 'admin') {
-        navigate('/admin');
-      } else {
-        navigate('/');
-      }
+      navigate('/'); // Redirect to home page
     } catch (error) {
       console.error('Login failed:', error);
       alert('Невірні облікові дані');
