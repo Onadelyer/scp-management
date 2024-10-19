@@ -7,6 +7,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import UserManagement from './components/UserManagement'; // Import the new component
 import AuthContext from './AuthContext';
+import UserProfile from './components/UserProfile';
 import './styles/App.css';
 
 function App() {
@@ -24,7 +25,9 @@ function App() {
           {auth.isAuthenticated && auth.role === 'Administrative Personnel' && (
             <Route path="/user-management" element={<UserManagement />} />
           )}
-          {/* Add other routes if needed */}
+          {auth.isAuthenticated && (
+            <Route path="/profile" element={<UserProfile />} />
+          )}
         </Routes>
         <Footer />
       </div>

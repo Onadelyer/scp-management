@@ -59,12 +59,16 @@ function Header() {
         ) : (
           <div className="logged-in-info">
             <span className="username">Привіт, {auth.username}!</span>
+            <Link to="/profile" className="profile-link">
+              Мій профіль
+            </Link>
             <button onClick={handleLogout} className="logout-button">
               Вийти
             </button>
           </div>
         )}
       </div>
+
     </header>
   );
 }
