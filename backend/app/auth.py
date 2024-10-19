@@ -167,3 +167,25 @@ def activate_user(user_id: int, db: Session = Depends(get_db), current_user: mod
     db.commit()
     db.refresh(db_user)
     return db_user
+
+@router.get("/profile", response_model=schemas.UserProfile)
+def get_profile(current_user: models.User = Depends(get_current_user)):
+    return current_user
+
+@router.put("/profile", response_model=schemas.UserProfile)
+def update_profile(
+    profile_data: schemas.UserProfileUpdate,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    if profile_data.username:
+        # Check if the new username is already taken
+        user_with_same_username = db.query(models.User).filter(models.User.username == profile_data.username).first()
+        if user_with_same_username and user_with_same_username.id != current_user.id:
+            raise HTTPException(status_code=400, detail="Username already taken")
+        current_user.username = profile_data.username
+    if profile_data.password:
+        current_user.hashed_password = get_password_hash(profile_data.password)
+    db.commit()
+    db.refresh(current_user)
+    return current_user
