@@ -32,30 +32,43 @@ function Header() {
       </h1>
       <nav className="nav-links">
         <ul className="nav-menu">
-          {auth.isAuthenticated && auth.role === "Administrative Personnel" ? (
+          {/* Navigation items based on role */}
+          {auth.isAuthenticated && auth.role === 'Administrative Personnel' && (
             <>
-              <li><Link to="/admin">Адмінська сторінка</Link></li>
-            </>
-          ) : (
-            <>
-              <li><Link to="/">Головна</Link></li>
+              <li>
+                <Link to="/">Головна</Link>
+              </li>
+              <li>
+                <Link to="/user-management">Керування користувачами</Link>
+              </li>
             </>
           )}
+          {/* Other roles can have their own navigation items if needed */}
         </ul>
       </nav>
       <div className="user-info">
         {!auth.isAuthenticated ? (
           <ul className="auth-links">
-            <li><Link to="/login">Вхід</Link></li>
-            <li><Link to="/register">Реєстрація</Link></li>
+            <li>
+              <Link to="/login">Вхід</Link>
+            </li>
+            <li>
+              <Link to="/register">Реєстрація</Link>
+            </li>
           </ul>
         ) : (
           <div className="logged-in-info">
             <span className="username">Привіт, {auth.username}!</span>
-            <button onClick={handleLogout} className="logout-button">Вийти</button>
+            <Link to="/profile" className="profile-link">
+              Мій профіль
+            </Link>
+            <button onClick={handleLogout} className="logout-button">
+              Вийти
+            </button>
           </div>
         )}
       </div>
+
     </header>
   );
 }
