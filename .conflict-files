@@ -1,3 +1,3 @@
-ancestorEntries = ["backend/app/schemas.py", "frontend/src/App.js"]
-ourEntries = ["backend/app/schemas.py", "frontend/src/App.js"]
-theirEntries = ["backend/app/schemas.py", "frontend/src/App.js"]
+ancestorEntries = ["backend/app/main.py", "backend/app/models.py", "backend/app/schemas.py", "frontend/src/App.js", "frontend/src/components/Header.js"]
+ourEntries = ["backend/app/main.py", "backend/app/models.py", "backend/app/schemas.py", "frontend/src/App.js", "frontend/src/components/Header.js", "frontend/src/components/StorageChamberDashboard.js", "frontend/src/styles/StorageChamberDashboard.css"]
+theirEntries = ["backend/app/main.py", "backend/app/models.py", "backend/app/schemas.py", "frontend/src/App.js", "frontend/src/components/Header.js", "frontend/src/components/StorageChamberDashboard.js", "frontend/src/styles/StorageChamberDashboard.css"]

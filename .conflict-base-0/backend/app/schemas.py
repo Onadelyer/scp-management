@@ -52,3 +52,28 @@ class UserListResponse(BaseModel):
 
 class UserDeleteResponse(BaseModel):
     detail: str
+
+class UserProfile(BaseModel):
+    id: int
+    username: str
+    role: str
+    is_active: bool
+
+    class Config:
+        orm_mode = True
+
+class UserProfileUpdate(BaseModel):
+    username: Optional[str]
+    password: Optional[str]
+
+    @validator('username')
+    def validate_username(cls, v):
+        if not v:
+            raise ValueError('Username cannot be empty')
+        return v
+
+    @validator('password')
+    def validate_password(cls, v):
+        if not v:
+            raise ValueError('Password cannot be empty')
+        return v

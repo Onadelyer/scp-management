@@ -8,6 +8,7 @@ import Register from './components/Register';
 import UserManagement from './components/UserManagement'; // Import the new component
 import AuthContext from './AuthContext';
 import UserProfile from './components/UserProfile';
+import StorageChamberDashboard from './components/StorageChamberDashboard';
 import './styles/App.css';
 
 function App() {
@@ -21,7 +22,9 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          {/* Protected route for User Management */}
+          {auth.isAuthenticated && (
+            <Route path="/storage-chambers" element={<StorageChamberDashboard />} />
+          )}
           {auth.isAuthenticated && auth.role === 'Administrative Personnel' && (
             <Route path="/user-management" element={<UserManagement />} />
           )}
