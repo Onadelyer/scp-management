@@ -1,0 +1,3 @@
+ancestorEntries = ["backend/app/schemas.py", "frontend/src/App.js"]
+ourEntries = ["backend/app/schemas.py", "frontend/src/App.js"]
+theirEntries = ["backend/app/schemas.py", "frontend/src/App.js"]
