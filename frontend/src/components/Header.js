@@ -32,18 +32,21 @@ function Header() {
       </h1>
       <nav className="nav-links">
         <ul className="nav-menu">
-          {/* Navigation items based on role */}
-          {auth.isAuthenticated && auth.role === 'Administrative Personnel' && (
+          <li>
+            <Link to="/">Головна</Link>
+          </li>
+          {auth.isAuthenticated && (
             <>
               <li>
-                <Link to="/">Головна</Link>
+                <Link to="/storage-chambers">Камери зберігання</Link>
               </li>
-              <li>
-                <Link to="/user-management">Керування користувачами</Link>
-              </li>
+              {auth.role === 'Administrative Personnel' && (
+                <li>
+                  <Link to="/user-management">Керування користувачами</Link>
+                </li>
+              )}
             </>
           )}
-          {/* Other roles can have their own navigation items if needed */}
         </ul>
       </nav>
       <div className="user-info">
