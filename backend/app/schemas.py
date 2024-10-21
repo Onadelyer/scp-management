@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, validator
-from typing import Optional
+from typing import Optional, List
 
 class UserBase(BaseModel):
     username: str
@@ -45,7 +45,7 @@ class UserResponse(UserBase):
     is_active: bool
 
     class Config:
-        orm_mode = True  # Valid in Pydantic 1.x
+        from_attributes = True
 
 class UserListResponse(BaseModel):
     users: list[UserResponse]
@@ -60,7 +60,7 @@ class UserProfile(BaseModel):
     is_active: bool
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class UserProfileUpdate(BaseModel):
     username: Optional[str]
@@ -77,7 +77,28 @@ class UserProfileUpdate(BaseModel):
         if not v:
             raise ValueError('Password cannot be empty')
         return v
-    
+
+# Simplified Object schema for nesting
+class ObjectNested(BaseModel):
+    id: int
+    identifier: str
+    name: str
+    classification: str
+    threat_level: str
+
+    class Config:
+        from_attributes = True
+
+# Simplified StorageChamber schema for nesting
+class StorageChamberNested(BaseModel):
+    id: int
+    name: str
+    chamber_type: str
+    location: str
+
+    class Config:
+        from_attributes = True
+
 class StorageChamberBase(BaseModel):
     name: str
     chamber_type: str
@@ -133,6 +154,38 @@ class StorageChamberUpdate(BaseModel):
 
 class StorageChamber(StorageChamberBase):
     id: int
+    objects: List[ObjectNested] = []
 
     class Config:
-        orm_mode = True
+        from_attributes = True
+
+class ObjectBase(BaseModel):
+    identifier: str
+    name: str
+    description: Optional[str] = None
+    classification: str
+    threat_level: str
+    special_containment_procedures: Optional[str] = None
+    storage_chamber_id: Optional[int] = None
+
+class ObjectCreate(ObjectBase):
+    pass
+
+class ObjectUpdate(BaseModel):
+    name: Optional[str]
+    description: Optional[str]
+    classification: Optional[str]
+    threat_level: Optional[str]
+    special_containment_procedures: Optional[str]
+    storage_chamber_id: Optional[int]
+
+class Object(ObjectBase):
+    id: int
+    storage_chamber: Optional[StorageChamberNested] = None
+
+    class Config:
+        from_attributes = True
+
+# Update forward references if necessary
+StorageChamber.update_forward_refs()
+Object.update_forward_refs()

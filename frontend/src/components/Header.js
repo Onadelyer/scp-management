@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/Header.css';
 import AuthContext from '../AuthContext';
+import { NavLink } from 'react-router-dom';
 
 function Header() {
   const { auth, setAuth } = useContext(AuthContext);
@@ -32,13 +33,18 @@ function Header() {
       </h1>
       <nav className="nav-links">
         <ul className="nav-menu">
+          {/* Common navigation items */}
           <li>
             <Link to="/">Головна</Link>
           </li>
+          {/* Navigation items based on role */}
           {auth.isAuthenticated && (
             <>
               <li>
-                <Link to="/storage-chambers">Камери зберігання</Link>
+                <NavLink to="/storage-chambers" activeClassName="active-link">Камери зберігання</NavLink>
+              </li>
+              <li>
+                <Link to="/objects">Об'єкти</Link>
               </li>
               {auth.role === 'Administrative Personnel' && (
                 <li>

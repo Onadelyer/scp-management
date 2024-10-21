@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import AuthContext from '../AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import '../styles/StorageChamberDashboard.css';
 
 function StorageChamberDashboard() {
@@ -143,7 +143,6 @@ function StorageChamberDashboard() {
     }
   };
 
-  // Render
   return (
     <div className="chamber-dashboard">
       <h2>Камери зберігання</h2>
@@ -165,7 +164,6 @@ function StorageChamberDashboard() {
         <div className="add-chamber-form">
           <h3>Додати нову камеру зберігання</h3>
           <form onSubmit={handleAddSubmit}>
-            {/* Add form fields for newChamber */}
             <div>
               <label>Назва:</label>
               <input
@@ -298,7 +296,9 @@ function StorageChamberDashboard() {
                 </>
               ) : (
                 <>
-                  <td>{chamber.name}</td>
+                  <td>
+                    <Link to={`/storage-chambers/${chamber.id}`}>{chamber.name}</Link>
+                  </td>
                   <td>{chamber.chamber_type}</td>
                   <td>{chamber.occupancy_status}</td>
                   <td>{chamber.condition}</td>
