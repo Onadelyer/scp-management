@@ -87,3 +87,8 @@
 .logout-button:hover {
   text-decoration: underline;
 }
+
+.nav-menu .active-link {
+  font-weight: bold;
+  text-decoration: underline;
+}
