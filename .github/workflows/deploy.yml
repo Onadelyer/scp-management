@@ -14,23 +14,15 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-    #   - name: Set up SSH
-    #     uses: webfactory/ssh-agent@v0.5.4
-    #     with:
-    #       ssh-private-key: ${{ secrets.DEV_SSH_KEY }}
-
-
       - name: Set Deployment Variables
         id: vars
         run: |
           if [ "${GITHUB_REF}" == "refs/heads/main" ]; then
             echo "ENV=main" >> $GITHUB_OUTPUT
             echo "SERVER_IP=${{ secrets.MAIN_SERVER_IP }}" >> $GITHUB_OUTPUT
-            echo "SSH_KEY=${{ secrets.SSH_KEY }}" >> $GITHUB_OUTPUT
           elif [ "${GITHUB_REF}" == "refs/heads/dev" ]; then
             echo "ENV=dev" >> $GITHUB_OUTPUT
             echo "SERVER_IP=${{ secrets.DEV_SERVER_IP }}" >> $GITHUB_OUTPUT
-            echo "SSH_KEY=${{ secrets.SSH_KEY }}" >> $GITHUB_OUTPUT
           else
             echo "Unsupported branch" && exit 1
           fi
@@ -39,7 +31,7 @@ jobs:
         if: always()
         uses: webfactory/ssh-agent@v0.5.4
         with:
-          ssh-private-key: ${{ steps.vars.outputs.SSH_KEY }}
+          ssh-private-key: ${{ secrets.SSH_KEY }}
 
       - name: Add EC2 to known_hosts
         run: |
