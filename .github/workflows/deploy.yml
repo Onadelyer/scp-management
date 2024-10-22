@@ -14,10 +14,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Set up SSH
-        uses: webfactory/ssh-agent@v0.5.4
-        with:
-          ssh-private-key: ${{ secrets.DEV_SSH_KEY }}
+    #   - name: Set up SSH
+    #     uses: webfactory/ssh-agent@v0.5.4
+    #     with:
+    #       ssh-private-key: ${{ secrets.DEV_SSH_KEY }}
 
 
       - name: Set Deployment Variables
