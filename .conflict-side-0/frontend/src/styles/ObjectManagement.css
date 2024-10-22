@@ -1,0 +1,60 @@
+.object-management {
+    margin: 20px;
+  }
+  
+  .object-actions {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .object-actions button {
+    margin-right: 10px;
+  }
+  
+  .object-actions input[type="text"] {
+    margin-left: auto;
+    padding: 5px;
+    width: 200px;
+  }
+  
+  .add-object-form {
+    margin-bottom: 20px;
+  }
+  
+  .add-object-form div {
+    margin-bottom: 10px;
+  }
+  
+  .object-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .object-table th,
+  .object-table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .object-table th {
+    background-color: #f2f2f2;
+  }
+  
+  .object-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  .object-table button {
+    margin-right: 5px;
+  }
+  
+  .object-table input,
+  .object-table select,
+  .object-table textarea {
+    width: 100%;
+    padding: 5px;
+    box-sizing: border-box;
+  }
+  
