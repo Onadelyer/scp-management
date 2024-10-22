@@ -3,7 +3,7 @@ services:
     build:
       context: ./frontend
     ports:
-      - "80:80"
+      - "8000:80"
     networks:
       - webnet
 
