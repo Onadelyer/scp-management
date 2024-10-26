@@ -7,7 +7,7 @@ from .auth import get_current_user, get_current_active_admin
 
 router = APIRouter(
     prefix="/storage-chambers",
-    tags=["storage-chambers"]
+    tags=["storage-chambers"] 
 )
 
 # Get all storage chambers
