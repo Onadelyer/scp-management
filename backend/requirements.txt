@@ -6,3 +6,7 @@ passlib[bcrypt]==1.7.4
 python-jose
 psycopg2-binary
 bcrypt==3.2.0
+pytest==7.4.0
+pytest-asyncio==0.21.1
+httpx==0.24.1
+pytest-cov==4.1.0
