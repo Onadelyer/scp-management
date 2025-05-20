@@ -3,7 +3,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+# Use SQLite as fallback if DATABASE_URL is not provided
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./scp.db")
 
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine)
