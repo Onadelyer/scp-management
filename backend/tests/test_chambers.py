@@ -1,21 +1,23 @@
 import pytest
 from fastapi import status
+from app.auth import SECRET_REGISTRATION_TOKEN
 
 def test_create_chamber(client):
-    # First create a user and login
+    # First create an admin user and login
     user_data = {
-        "username": "chamberuser",
+        "username": "chamberadmin",
         "email": "chamber@example.com",
         "password": "chamberpassword",
-        "role": "Administrative Personnel"  # Only admin can create chambers
+        "role": "Administrative Personnel",
+        "secret_token": SECRET_REGISTRATION_TOKEN
     }
     client.post("/register", json=user_data)
     
     login_data = {
-        "username": "chamberuser",
+        "username": "chamberadmin",
         "password": "chamberpassword"
     }
-    login_response = client.post("/token", data=login_data)
+    login_response = client.post("/login", json=login_data)
     access_token = login_response.json()["access_token"]
     headers = {"Authorization": f"Bearer {access_token}"}
     
@@ -36,37 +38,21 @@ def test_create_chamber(client):
     assert "id" in data
 
 def test_get_chambers(client):
-    # First create a user and login
-    user_data = {
-        "username": "getchamberuser",
+    # Create an admin user and login
+    admin_data = {
+        "username": "getchamberadmin",
         "email": "getchamber@example.com",
         "password": "getchamberpassword",
-        "role": "Security Personnel"
-    }
-    client.post("/register", json=user_data)
-    
-    login_data = {
-        "username": "getchamberuser",
-        "password": "getchamberpassword"
-    }
-    login_response = client.post("/token", data=login_data)
-    access_token = login_response.json()["access_token"]
-    headers = {"Authorization": f"Bearer {access_token}"}
-    
-    # Create an admin user to create chambers
-    admin_data = {
-        "username": "adminuser",
-        "email": "admin@example.com",
-        "password": "adminpassword",
-        "role": "Administrative Personnel"
+        "role": "Administrative Personnel",
+        "secret_token": SECRET_REGISTRATION_TOKEN
     }
     client.post("/register", json=admin_data)
     
     admin_login = {
-        "username": "adminuser",
-        "password": "adminpassword"
+        "username": "getchamberadmin",
+        "password": "getchamberpassword"
     }
-    admin_response = client.post("/token", data=admin_login)
+    admin_response = client.post("/login", json=admin_login)
     admin_token = admin_response.json()["access_token"]
     admin_headers = {"Authorization": f"Bearer {admin_token}"}
     
@@ -90,8 +76,8 @@ def test_get_chambers(client):
     client.post("/chambers/", json=chamber_data1, headers=admin_headers)
     client.post("/chambers/", json=chamber_data2, headers=admin_headers)
     
-    # Get all chambers as regular user
-    response = client.get("/chambers/", headers=headers)
+    # Get all chambers as admin user
+    response = client.get("/chambers/", headers=admin_headers)
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
     assert len(data) >= 2  # Should have at least the two chambers we created
@@ -102,7 +88,8 @@ def test_get_single_chamber(client):
         "username": "singleadmin",
         "email": "singleadmin@example.com",
         "password": "singleadminpass",
-        "role": "Administrative Personnel"
+        "role": "Administrative Personnel",
+        "secret_token": SECRET_REGISTRATION_TOKEN
     }
     client.post("/register", json=admin_data)
     
@@ -110,7 +97,7 @@ def test_get_single_chamber(client):
         "username": "singleadmin",
         "password": "singleadminpass"
     }
-    admin_response = client.post("/token", data=admin_login)
+    admin_response = client.post("/login", json=admin_login)
     admin_token = admin_response.json()["access_token"]
     admin_headers = {"Authorization": f"Bearer {admin_token}"}
     
