@@ -31,8 +31,5 @@
         ">0.2%",
         "not dead",
         "not op_mini all"
-    ],
-    "jest": {
-        "testEnvironment": "jsdom"
-    }
+    ]
 }
