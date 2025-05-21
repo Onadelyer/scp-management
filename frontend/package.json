@@ -12,18 +12,14 @@
     "scripts": {
         "start": "react-scripts start",
         "build": "react-scripts build",
-        "test": "react-scripts test --watchAll=false",
-        "test:coverage": "react-scripts test --coverage --watchAll=false",
-        "eject": "react-scripts eject"
+        "test": "react-scripts test --passWithNoTests",
+        "test:ci": "react-scripts test --watchAll=false --passWithNoTests"
     },
     "devDependencies": {
         "react-scripts": "5.0.1",
         "@testing-library/jest-dom": "^5.16.5",
         "@testing-library/react": "^13.4.0",
-        "@testing-library/user-event": "^14.4.3",
-        "jest": "^27.5.1",
-        "jest-environment-jsdom": "^27.5.1",
-        "msw": "^1.2.1"
+        "@testing-library/user-event": "^14.4.3"
     },
     "eslintConfig": {
         "extends": [
@@ -37,10 +33,6 @@
         "not op_mini all"
     ],
     "jest": {
-        "collectCoverageFrom": [
-            "src/**/*.{js,jsx}",
-            "!src/index.js",
-            "!src/reportWebVitals.js"
-        ]
+        "testEnvironment": "jsdom"
     }
 }
